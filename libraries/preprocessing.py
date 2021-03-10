@@ -1,5 +1,5 @@
 ## Libraries ###########################################################
-import cv2, os, sys
+import cv2, os, sys, tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -34,15 +34,17 @@ class Preprocessing:
         if self.normalize: image = cv2.normalize(image, norm_img, 0, 255, cv2.NORM_MINMAX)/255.0
         return image
 
-    def images_processing(self, image_dir):
+    def images_processing(self, image_list): # Directory path or image files in list
         images = []
-        for ifile in os.listdir(image_dir):
-            ipath = os.path.join(image_dir, ifile)
-            if os.path.isfile(ipath):
-                images.append(self.image_read(ipath))
+        print("[INFO] Reading images...")
+        if type(image_list) == str and os.path.isdir(image_list):
+            image_list = [os.path.join(image_list, f) for f in os.listdir(image_list)]
+        for ifile in tqdm.tqdm(image_list):
+            if os.path.isfile(ifile):
+                images.append(self.image_read(ifile)[None])
             else:
-                print("[WARNING] {} invalid. Ignored it.".format(ipath))
-        return np.stack(images, axis = 0)
+                print("[WARNING] {} invalid. Ignored it.".format(ifile))
+        return np.vstack(images)
 
 def image_plot(image_org, image_pro):
     _, axs = plt.subplots(ncols = 2, figsize = (10, 5))
