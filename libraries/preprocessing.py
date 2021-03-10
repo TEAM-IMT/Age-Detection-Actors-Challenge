@@ -94,6 +94,8 @@ def images_plot(images_batch, nrows = 2, ncols = 3):
     plt.tight_layout()
     plt.show()
 
+
+## Main ################################################################
 if __name__ == "__main__":
     if len(sys.argv) != 2 :
         sys.exit("[ERROR] Usage: python3 " + sys.argv[0] + " <path_image_or_dirimage>")
