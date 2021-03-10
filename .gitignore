@@ -1,1 +1,4 @@
 *.jpg
+*.dat
+*.bz2
+__pycache__

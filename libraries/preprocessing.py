@@ -3,15 +3,32 @@ import cv2, os, sys, tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
+try:
+    import dlib
+except:
+    sys.exit("[ERROR] ModuleNotFoundError: No module named 'dlib'. Also, you need install cmake")
+from Alignment import FaceAligner
+from help import rect_to_bb
+
 ## Functions and Class #################################################
 class Preprocessing:
     # Constructor
-    def __init__(self, gray_scale = False, resize = (None, None), normalize = False):
+    def __init__(self, gray_scale = False, resize = (None, None), normalize = False, rotate = None):
         self.gray_scale = gray_scale
         self.resize = resize
         self.normalize = normalize
+        self.face_alig = dlib.shape_predictor(rotate) if rotate is not None else None
+        self.face_alig = FaceAligner(self.face_alig, desiredFaceWidth = 256) if rotate is not None else None
 
     # Methods
+    def _rotation(self, image, image_grey = None):
+        (x, y, w, h) = (0, 0, image.shape[1], image.shape[0])
+        rect = dlib.rectangle(left = x, top = y, right = w, bottom = h)
+        if image_grey is None: image_grey = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        image = self.face_alig.align(image, image_grey, rect)      
+        image = np.delete(image, np.where(~image.any(axis = 0))[0], axis = 1) # Remove zero-pad border
+        return np.delete(image, np.where(~image.any(axis = 1))[0], axis = 0)
+
     def image_read(self, image_file, process = True): 
         image = cv2.imread(image_file)[...,::-1] # RGB Format
         if process: image = self.processing(image)
@@ -20,7 +37,11 @@ class Preprocessing:
     def processing(self, image):
         # Gray scale
         if self.gray_scale: 
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+        # Rotation
+        if self.face_alig is not None:
+            image = self._rotation(image, image_grey = image.copy() if self.gray_scale else None)
 
         # Resize
         rew, reh = self.resize
@@ -30,8 +51,9 @@ class Preprocessing:
             image = cv2.resize(image, (rew, reh), interpolation = cv2.INTER_LANCZOS4)
         
         # Normalize
-        norm_img = np.zeros((image.shape[1], image.shape[0]))
-        if self.normalize: image = cv2.normalize(image, norm_img, 0, 255, cv2.NORM_MINMAX)/255.0
+        if self.normalize: 
+            norm_img = np.zeros((image.shape[1], image.shape[0]))
+            image = cv2.normalize(image, norm_img, 0, 255, cv2.NORM_MINMAX)/255.0
         return image
 
     def images_processing(self, image_list): # Directory path or image files in list
@@ -74,10 +96,11 @@ def images_plot(images_batch, nrows = 2, ncols = 3):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2 :
-        sys.exit("[ERROR] Usage: python3" + sys.argv[0] + "<path_image_or_dirimage>")
+        sys.exit("[ERROR] Usage: python3 " + sys.argv[0] + " <path_image_or_dirimage>")
     
     ipath = sys.argv[1]
-    preproc = Preprocessing(gray_scale = True, resize = (300,300), normalize = True)
+    preproc = Preprocessing(gray_scale = False, resize = (300,300), normalize = True,
+                rotate = "./shape_predictor_68_face_landmarks.dat")
 
     # Process
     if os.path.isfile(ipath):
