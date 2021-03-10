@@ -77,7 +77,7 @@ if __name__ == "__main__":
         sys.exit("[ERROR] Usage: python3" + sys.argv[0] + "<path_image_or_dirimage>")
     
     ipath = sys.argv[1]
-    preproc = Preprocessing(gray_scale = False, resize = (300,300), normalize = True)
+    preproc = Preprocessing(gray_scale = True, resize = (300,300), normalize = True)
 
     # Process
     if os.path.isfile(ipath):
