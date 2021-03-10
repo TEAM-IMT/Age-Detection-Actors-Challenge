@@ -37,7 +37,7 @@
   <h3 align="center">project_title</h3>
 
   <p align="center">
-    project_description
+    [Age detection Challenge](https://datahack.analyticsvidhya.com/contest/practice-problem-age-detection/#LeaderBoard)
     <br />
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br />
@@ -125,7 +125,7 @@ Then, you can use 2 functions:
    images = preproc.images_processing(ilist)
 ```
 * `preproc.image_read(str)` : Read and process a image and return it in numpy.array format
-* `preproc.images_processing` : Read multiple images and return them into a batch (`(N, heigh, width, color)` or `(N, heigh, width)`, depends of `gray_scale` value)
+* `preproc.images_processing(list or directory)` : Read multiple images and return them into a batch (`(N, heigh, width, color)` or `(N, heigh, width)`, depends of `gray_scale` value)
 
 <!-- ROADMAP -->
 ## Roadmap
