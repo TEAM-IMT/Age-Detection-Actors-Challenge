@@ -1,6 +1,7 @@
 ## Libraries ###########################################################
-import cv2, os, sys, tqdm
+import cv2, os, sys, tqdm, pickle
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 try:
@@ -100,8 +101,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 2 :
         sys.exit("[ERROR] Usage: python3 " + sys.argv[0] + " <path_image_or_dirimage>")
     
+    split_data = False
+    train, test, valid = 0.6, 0.2, 0.2
     ipath = sys.argv[1]
-    preproc = Preprocessing(gray_scale = False, resize = (300,300), normalize = True,
+    preproc = Preprocessing(gray_scale = True, resize = (80,100), normalize = True,
                 rotate = "./shape_predictor_68_face_landmarks.dat")
 
     # Process
@@ -114,8 +117,24 @@ if __name__ == "__main__":
         # Plot results
         image_plot(image, image_pro)
     elif os.path.isdir(ipath):
-        images = preproc.images_processing(ipath)
-        print("[INFO] Batch image shape: ", images.shape)
+        prefix = 'color_' if not preproc.gray_scale else 'gray_'
+        if split_data:
+            list_imag = os.listdir(ipath)
+            N = len(list_imag)
+            data = {'train': list_imag[:int(train*N)],
+                    'valid': list_imag[int(train*N):int((train+valid)*N)],
+                    'test': list_imag[int((train+valid)*N):]}
+            table = pd.read_csv('./data/train.csv', sep = ',', header = 0, index_col = 0)
+            for key, value in data.items():
+                print("[INFO] {} process".format(key))
+                images = preproc.images_processing([os.path.join(ipath,x) for x in value])
+                labels = table.loc[value, 'Class']
+                print("[INFO] Batch image shape: ", images.shape)
+                pickle.dump([images, labels], open(prefix + key + ".pkl","wb"))
+        else:
+            images = preproc.images_processing(ipath)
+            pickle.dump(images, open(prefix + "test_unlabel.pkl","wb"))
+        
         images_plot(images, nrows = 2, ncols = 5)
     else:
         print("[ERROR] Invalid path.")

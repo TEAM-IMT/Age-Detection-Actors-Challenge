@@ -1,4 +1,6 @@
+*.pkl
 *.jpg
 *.dat
 *.bz2
+*.zip
 __pycache__
