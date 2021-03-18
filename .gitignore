@@ -3,4 +3,5 @@
 *.dat
 *.bz2
 *.zip
+.vscode
 __pycache__
