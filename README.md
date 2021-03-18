@@ -1,24 +1,5 @@
 # Age-Detection-Actors-Challenge
 
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
-*** To avoid retyping too much info. Do a search and replace for the following:
-*** github_username, repo_name, twitter_handle, email, project_title, project_description
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -30,23 +11,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/daca1897/Age-Detection-Actors-Challenge">
+    <img src="vae_results.png" alt="Logo" width="720" >
   </a>
 
-  <h3 align="center">project_title</h3>
+  <h3 align="center"> Age detection Challenge </h3>
 
   <p align="center">
-    [Age detection Challenge](https://datahack.analyticsvidhya.com/contest/practice-problem-age-detection/#LeaderBoard)
+    Facial feature analysis has always been a topic of interest mainly due to its applicability. Deep Learning techniques are now making it possible for face analysis to be not just a dream but a reality. This practice problem is get you more acquainted with deep learning. <a href="https://datahack.analyticsvidhya.com/contest/practice-problem-age-detection"> Link
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/daca1897/Age-Detection-Actors-Challenge"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/daca1897/Age-Detection-Actors-Challenge">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/daca1897/Age-Detection-Actors-Challenge/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/daca1897/Age-Detection-Actors-Challenge/issues">Request Feature</a>
   </p>
 </p>
 
@@ -83,8 +64,7 @@ Proyecto to [Age detection Challenge](https://datahack.analyticsvidhya.com/conte
 
 ### Built With
 * [opencv](https://opencv.org/)
-* []()
-* []()
+* [tensorflow](https://www.tensorflow.org/)
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -110,7 +90,7 @@ In python, import de `processing.py` library and use it as well as:
 ```python
    from libraries.processing import Preprocessing
 
-   preproc = Preprocessing(gray_scale, resize, normalize, rotate)
+   preproc = Preprocessing(gray_scale, resize, normalize, rotate, vae_weight_path)
 ```
 
 Where each variable is:
@@ -118,6 +98,7 @@ Where each variable is:
 * `resize` : Tuple with new `(heigh, width)` desired (`default = (None, None)`)
 * `normalize` : Flag to normalize each image (`default = False`)
 * `rotate` : `shape_predictor_68_face_landmarks.dat` path (`default = None` -> No rotate)
+* `vae_weight_path` : Path with default weights to VAE model (`default = None` -> No encode)
 
 Then, you can use 2 functions:
 ```python
@@ -164,25 +145,18 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
-* []()
-* []()
-* []()
-
-
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/daca1897/Age-Detection-Actors-Challenge.svg?style=for-the-badge
+[contributors-url]: https://github.com/daca1897/Age-Detection-Actors-Challenge/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/daca1897/Age-Detection-Actors-Challenge.svg?style=for-the-badge
+[forks-url]: https://github.com/daca1897/Age-Detection-Actors-Challenge/network/members
+[stars-shield]: https://img.shields.io/github/stars/daca1897/Age-Detection-Actors-Challenge.svg?style=for-the-badge
+[stars-url]: https://github.com/daca1897/Age-Detection-Actors-Challenge/stargazers
+[issues-shield]: https://img.shields.io/github/issues/daca1897/Age-Detection-Actors-Challenge.svg?style=for-the-badge
+[issues-url]: https://github.com/daca1897/Age-Detection-Actors-Challenge/issues
+[license-shield]: https://img.shields.io/github/license/daca1897/Age-Detection-Actors-Challenge.svg?style=for-the-badge
+[license-url]: https://github.com/daca1897/Age-Detection-Actors-Challenge/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/github_username
