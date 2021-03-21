@@ -43,12 +43,12 @@ class Preprocessing:
         image = np.delete(image, np.where(~image.any(axis = 0))[0], axis = 1) # Remove zero-pad border
         return np.delete(image, np.where(~image.any(axis = 1))[0], axis = 0)
 
-    def image_read(self, image_file, process = True, encode = True): 
+    def image_read(self, image_file, process = True):
         image = cv2.imread(image_file)[...,::-1] # RGB Format
-        if process: image = self.processing(image, encode = encode)
+        if process: image = self.processing(image)
         return image 
     
-    def processing(self, image, encode = True):
+    def processing(self, image):
         # Gray scale
         if self.gray_scale: 
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
@@ -67,11 +67,11 @@ class Preprocessing:
         # Normalize
         if self.normalize: 
             norm_img = np.zeros((image.shape[1], image.shape[0]))
-            image = cv2.normalize(image, norm_img, 0, 255, cv2.NORM_MINMAX)/255.0
+            image = cv2.normalize(image, norm_img, 0, 255, cv2.NORM_MINMAX)
 
         # VAE codification
-        if self.vae_weighs_path is not None and encode:
-            image = self.vae_model.image_encode(image[None])[0]
+        if self.vae_weighs_path is not None:
+            image = self.vae_model.image_encode(image[None]/255.0)[0] # Need to image normalize 
         return image
 
     def images_processing(self, image_list): # Directory path or image files in list
@@ -80,12 +80,9 @@ class Preprocessing:
         if type(image_list) == str and os.path.isdir(image_list):
             image_list = [os.path.join(image_list, f) for f in os.listdir(image_list)]
         for ifile in tqdm.tqdm(image_list):
-            if os.path.isfile(ifile):
-                images.append(self.image_read(ifile, encode = False)[None])
-            else:
-                print("[WARNING] {} invalid. Ignored it.".format(ifile))
-        images = np.vstack(images)
-        return images if self.vae_weighs_path is None else self.vae_model.image_encode(images)
+            if os.path.isfile(ifile): images.append(self.image_read(ifile))
+            else: print("[WARNING] {} invalid. Ignored it.".format(ifile))
+        return np.stack(images, axis = 0)
 
     def images_decode(self, images):
         return self.vae_model.image_decode(images)
@@ -125,15 +122,15 @@ if __name__ == "__main__":
     split_data = False
     train, test, valid = 0.7, 0.15, 0.15
     ipath = sys.argv[1]
-    preproc = Preprocessing(gray_scale = True, resize = (80,100), normalize = True,
-                rotate = "./shape_predictor_68_face_landmarks.dat",
-                vae_weighs_path = './weights/vae_model.h5') # Ignore all parameters
+    preproc = Preprocessing(gray_scale = False, resize = (64,64), normalize = True,)
+                # rotate = "./shape_predictor_68_face_landmarks.dat",
+                # vae_weighs_path = './weights/vae_model.h5') # Ignore all parameters
 
     # Process
     if os.path.isfile(ipath):
         image = preproc.image_read(ipath, process = False)
         image_pro = preproc.image_read(ipath, process = True)
-        print("[INFO] Shape image processed: ", image_pro.shape)
+        print("[INFO] Shape image and type processed: ", image_pro.shape, type(image_pro), image_pro.dtype)
         print("[INFO] Image values between [{},{}].".format(np.min(image_pro), np.max(image_pro)))
 
         # Plot results

@@ -1,5 +1,6 @@
 *.pkl
 *.jpg
+*.png
 *.dat
 *.bz2
 *.zip
