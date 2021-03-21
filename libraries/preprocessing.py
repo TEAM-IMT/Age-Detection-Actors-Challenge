@@ -24,7 +24,7 @@ class Preprocessing:
         self.face_alig = FaceAligner(self.face_alig, desiredFaceWidth = 256) if rotate is not None else None
         self.vae_weighs_path = vae_weighs_path
         if self.vae_weighs_path is not None: # Values to default if we apply VAE
-            self.vae_model = DB_VAE(20) # Latent space
+            self.vae_model = DB_VAE(400) # Latent space
             self.vae_model.load(self.vae_weighs_path)
             self.gray_scale = False
             self.resize = (64,64)
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2 :
         sys.exit("[ERROR] Usage: python3 " + sys.argv[0] + " <path_image_or_dirimage>")
     
-    split_data = False
+    split_data = True
     train, test, valid = 0.7, 0.15, 0.15
     ipath = sys.argv[1]
     preproc = Preprocessing(gray_scale = False, resize = (106,128), normalize = True, # Best (80,100)
@@ -158,7 +158,7 @@ if __name__ == "__main__":
             image_list = os.listdir(ipath)
             images = preproc.images_processing([os.path.join(ipath,x) for x in image_list])
             pickle.dump([images, image_list], open(prefix + "test_unlabel.pkl","wb"))
-        if preproc.vae_weighs_path is None: images_plot(images[:1000], nrows = 2, ncols = 5)
-        else: images_plot(preproc.images_decode(images[:1000]), nrows = 2, ncols = 5)
+        if preproc.vae_weighs_path is None: images_plot(images[:1000], nrows = 3, ncols = 8)
+        else: images_plot(preproc.images_decode(images[:1000]), nrows = 3, ncols = 8)
     else:
         print("[ERROR] Invalid path.")

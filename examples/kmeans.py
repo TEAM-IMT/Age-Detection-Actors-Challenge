@@ -41,7 +41,7 @@ def ioU_clusters(data, total_clusters = 10, isplot = False):
     columnsNum = int(np.ceil(N/float(rowsNum)))
     clustersCenter = [] # Save a clusters centers
     IoU = np.zeros(N) # Save the result of the mean of maximum IoU between the bounding box and individual anchors.
-    if isplot: plt.figure(1)
+    if isplot: plt.figure(1, figsize = (10,4))
     
     print("[INFO] KMeans process...")
     for i, clus in tqdm.tqdm(enumerate(total_clusters)):
@@ -71,9 +71,9 @@ def ioU_clusters(data, total_clusters = 10, isplot = False):
     return IoU, clustersCenter
 
 ## Main ################################################################
-if __name__ == "__main__":
+def kmeans_process(total_clusters = 8):
     data = database_gen(['./data/Train', './data/Test'])
-    meanIoU, total_clusters = ioU_clusters(data, isplot = True, total_clusters = 10)
+    meanIoU, total_clusters = ioU_clusters(data, total_clusters = total_clusters, isplot = True)
     print()
     clusters = {}
     for i, center in enumerate(total_clusters):
@@ -83,9 +83,12 @@ if __name__ == "__main__":
 
     print("[INFO]: Cluster's center: ", clusters)
 
-    plt.figure(2)
+    plt.figure(2, figsize = (10,4))
     plt.plot(list(clusters.keys()), meanIoU, '-o', markersize = 10)
     plt.xlabel("# Clusters"), plt.ylabel("mean(max(IoU))")
     plt.grid(True)
-    
+
     plt.show()
+
+if __name__ == "__main__":
+    kmeans_process(total_clusters = 10)
