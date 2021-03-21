@@ -4,5 +4,6 @@
 *.dat
 *.bz2
 *.zip
+*.rar
 .vscode
 __pycache__

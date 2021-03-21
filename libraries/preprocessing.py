@@ -24,15 +24,10 @@ class Preprocessing:
         self.face_alig = FaceAligner(self.face_alig, desiredFaceWidth = 256) if rotate is not None else None
         self.vae_weighs_path = vae_weighs_path
         if self.vae_weighs_path is not None: # Values to default if we apply VAE
-            try:
-                self.vae_model = DB_VAE(100) # Latent space
-                self.vae_model.load(self.vae_weighs_path)
-                self.gray_scale = False
-                self.resize = (64,64)
-                self.normalize = True
-            except:
-                self.vae_weighs_path = None
-                print("[WARNING] Error in model upload. Ignore it.")
+            self.vae_model = DB_VAE(20) # Latent space
+            self.vae_model.load(self.vae_weighs_path)
+            self.gray_scale = False
+            self.resize = (64,64)
 
     # Methods
     def _rotation(self, image, image_grey = None):
@@ -122,9 +117,9 @@ if __name__ == "__main__":
     split_data = False
     train, test, valid = 0.7, 0.15, 0.15
     ipath = sys.argv[1]
-    preproc = Preprocessing(gray_scale = False, resize = (64,64), normalize = True,)
+    preproc = Preprocessing(gray_scale = False, resize = (106,128), normalize = True, # Best (80,100)
                 # rotate = "./shape_predictor_68_face_landmarks.dat",
-                # vae_weighs_path = './weights/vae_model.h5') # Ignore all parameters
+                vae_weighs_path = './weights/vae_model.h5') # Ignore all parameters
 
     # Process
     if os.path.isfile(ipath):
@@ -139,12 +134,20 @@ if __name__ == "__main__":
     elif os.path.isdir(ipath):
         prefix = 'color_' if not preproc.gray_scale else 'gray_'
         if split_data:
-            list_imag = os.listdir(ipath)
-            N = len(list_imag)
-            data = {'train': list_imag[:int(train*N)],
-                    'valid': list_imag[int(train*N):int((train+valid)*N)],
-                    'test': list_imag[int((train+valid)*N):]}
-            table = pd.read_csv('./data/train.csv', sep = ',', header = 0, index_col = 0)
+            table = pd.read_csv('./data/Train_Augmented.csv', sep = ',', header = 0, index_col = 0)
+            print("[INFO] Total data: ", len(table))
+            data = {cl: table.loc[table['Class'] == cl, 'ID'].to_list() for cl in table['Class'].unique()}
+            print("[INFO] After shuffle: ", ["{}: {}".format(key, data[key][:3]) for key in data.keys()])
+            for key in data.keys(): np.random.shuffle(data[key]) # Shuffle
+            print("[INFO] After shuffle: ", ["{}: {}".format(key, data[key][:3]) for key in data.keys()])
+            N = {k:len(v) for k,v in data.items()}
+            data = {'train': sum([data[k][:int(train*N[k])] for k in data.keys()], []),
+                    'valid': sum([data[k][int(train*N[k]):int((train+valid)*N[k])] for k in data.keys()], []),
+                    'test': sum([data[k][int((train+valid)*N[k]):] for k in data.keys()], [])}
+            for key in data.keys(): np.random.shuffle(data[key]) # Last shuffle
+            print("[INFO] After shuffle: ", ["{}: {}".format(key, data[key][:3]) for key in data.keys()])
+            print("[INFO] Lenght of sets: ", ["{}: {}".format(key, len(data[key])) for key in data.keys()])
+            table = table.set_index('ID')
             for key, value in data.items():
                 print("[INFO] {} process".format(key))
                 images = preproc.images_processing([os.path.join(ipath,x) for x in value])
@@ -152,9 +155,10 @@ if __name__ == "__main__":
                 print("[INFO] Batch image shape: ", images.shape)
                 pickle.dump([images, labels], open(prefix + key + ".pkl","wb"))
         else:
-            images = preproc.images_processing(ipath)
-            pickle.dump(images, open(prefix + "test_unlabel.pkl","wb"))
-        if preproc.vae_weighs_path is None: images_plot(images, nrows = 2, ncols = 5)
-        else: images_plot(preproc.images_decode(images), nrows = 2, ncols = 5)
+            image_list = os.listdir(ipath)
+            images = preproc.images_processing([os.path.join(ipath,x) for x in image_list])
+            pickle.dump([images, image_list], open(prefix + "test_unlabel.pkl","wb"))
+        if preproc.vae_weighs_path is None: images_plot(images[:1000], nrows = 2, ncols = 5)
+        else: images_plot(preproc.images_decode(images[:1000]), nrows = 2, ncols = 5)
     else:
         print("[ERROR] Invalid path.")
