@@ -114,7 +114,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2 :
         sys.exit("[ERROR] Usage: python3 " + sys.argv[0] + " <path_image_or_dirimage>")
     
-    split_data = True
+    split_data = False
     train, test, valid = 0.7, 0.15, 0.15
     ipath = sys.argv[1]
     preproc = Preprocessing(gray_scale = False, resize = (106,128), normalize = True, # Best (80,100)
