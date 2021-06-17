@@ -77,11 +77,11 @@ Download the file `shape_predictor_68_face_landmarks.dat.bz2` contained in the `
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/daca1897/Age-Detection-Actors-Challenge.git
+   git clone https://github.com/TEAM-IMT/Age-Detection-Actors-Challenge.git
    ```
 2. Install requerements
    ```sh
-   python3 -m pip install -U requerements.
+   python3 -m pip install -U requirements.
    ```
 
 <!-- USAGE EXAMPLES -->
